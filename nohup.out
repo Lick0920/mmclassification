@@ -1,0 +1,208 @@
+/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/torch/distributed/launch.py:178: FutureWarning: The module torch.distributed.launch is deprecated
+and will be removed in future. Use torchrun.
+Note that --use_env is set by default in torchrun.
+If your script expects `--local_rank` argument to be set, please
+change it to read from `os.environ['LOCAL_RANK']` instead. See 
+https://pytorch.org/docs/stable/distributed.html#launch-utility for 
+further instructions
+
+  warnings.warn(
+WARNING:torch.distributed.run:
+*****************************************
+Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+*****************************************
+WARNING:torch.distributed.elastic.agent.server.api:Received 2 death signal, shutting down workers
+WARNING:torch.distributed.elastic.multiprocessing.api:Sending process 1645720 closing signal SIGINT
+WARNING:torch.distributed.elastic.multiprocessing.api:Sending process 1645721 closing signal SIGINT
+WARNING:torch.distributed.elastic.multiprocessing.api:Sending process 1645722 closing signal SIGINT
+WARNING:torch.distributed.elastic.multiprocessing.api:Sending process 1645723 closing signal SIGINT
+WARNING:torch.distributed.elastic.multiprocessing.api:Sending process 1645724 closing signal SIGINT
+WARNING:torch.distributed.elastic.multiprocessing.api:Sending process 1645725 closing signal SIGINT
+WARNING:torch.distributed.elastic.multiprocessing.api:Sending process 1645726 closing signal SIGINT
+WARNING:torch.distributed.elastic.multiprocessing.api:Sending process 1645727 closing signal SIGINT
+Traceback (most recent call last):
+  File "tools/train.py", line 9, in <module>
+    import mmcv
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/__init__.py", line 6, in <module>
+    from .fileio import *
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/fileio/__init__.py", line 2, in <module>
+    from .file_client import BaseStorageBackend, FileClient
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/fileio/file_client.py", line 15, in <module>
+    from mmcv.utils.misc import has_method
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/__init__.py", line 41, in <module>
+    from .env import collect_env
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/env.py", line 13, in <module>
+    from .parrots_wrapper import get_build_config
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/parrots_wrapper.py", line 13, in <module>
+    IS_CUDA_AVAILABLE = is_cuda_available()
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/parrots_wrapper.py", line 10, in is_cuda_available
+    return torch.cuda.is_available()
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/torch/cuda/__init__.py", line 80, in is_available
+    return torch._C._cuda_getDeviceCount() > 0
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "tools/train.py", line 9, in <module>
+    import mmcv
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/__init__.py", line 6, in <module>
+    from .fileio import *
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/fileio/__init__.py", line 2, in <module>
+    from .file_client import BaseStorageBackend, FileClient
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/fileio/file_client.py", line 15, in <module>
+    from mmcv.utils.misc import has_method
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/__init__.py", line 41, in <module>
+    from .env import collect_env
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/env.py", line 13, in <module>
+    from .parrots_wrapper import get_build_config
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/parrots_wrapper.py", line 13, in <module>
+    IS_CUDA_AVAILABLE = is_cuda_available()
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/parrots_wrapper.py", line 10, in is_cuda_available
+    return torch.cuda.is_available()
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/torch/cuda/__init__.py", line 80, in is_available
+    return torch._C._cuda_getDeviceCount() > 0
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "tools/train.py", line 9, in <module>
+Traceback (most recent call last):
+  File "tools/train.py", line 9, in <module>
+    import mmcv
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/__init__.py", line 6, in <module>
+Traceback (most recent call last):
+  File "tools/train.py", line 9, in <module>
+    import mmcv
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/__init__.py", line 6, in <module>
+    from .fileio import *
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/fileio/__init__.py", line 2, in <module>
+Traceback (most recent call last):
+  File "tools/train.py", line 9, in <module>
+    import mmcv
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/__init__.py", line 6, in <module>
+    from .fileio import *
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/fileio/__init__.py", line 2, in <module>
+    from .file_client import BaseStorageBackend, FileClient
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/fileio/file_client.py", line 15, in <module>
+    import mmcv
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/__init__.py", line 6, in <module>
+    from .fileio import *
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/fileio/__init__.py", line 2, in <module>
+    from .file_client import BaseStorageBackend, FileClient
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/fileio/file_client.py", line 15, in <module>
+    from mmcv.utils.misc import has_method
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/__init__.py", line 41, in <module>
+    from .fileio import *
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/fileio/__init__.py", line 2, in <module>
+Traceback (most recent call last):
+  File "tools/train.py", line 9, in <module>
+    from .file_client import BaseStorageBackend, FileClient
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/fileio/file_client.py", line 15, in <module>
+    from mmcv.utils.misc import has_method
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/__init__.py", line 41, in <module>
+    from .env import collect_env
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/env.py", line 13, in <module>
+    from .file_client import BaseStorageBackend, FileClient
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/fileio/file_client.py", line 15, in <module>
+    import mmcv
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/__init__.py", line 6, in <module>
+    from mmcv.utils.misc import has_method
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/__init__.py", line 41, in <module>
+    from .env import collect_env
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/env.py", line 13, in <module>
+    from .parrots_wrapper import get_build_config
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/parrots_wrapper.py", line 13, in <module>
+    from mmcv.utils.misc import has_method
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/__init__.py", line 41, in <module>
+    from .fileio import *
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/fileio/__init__.py", line 2, in <module>
+    from .env import collect_env
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/env.py", line 13, in <module>
+    from .parrots_wrapper import get_build_config
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/parrots_wrapper.py", line 13, in <module>
+    IS_CUDA_AVAILABLE = is_cuda_available()
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/parrots_wrapper.py", line 10, in is_cuda_available
+    from .env import collect_env
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/env.py", line 13, in <module>
+    from .file_client import BaseStorageBackend, FileClient
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/fileio/file_client.py", line 15, in <module>
+    IS_CUDA_AVAILABLE = is_cuda_available()
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/parrots_wrapper.py", line 10, in is_cuda_available
+    from .parrots_wrapper import get_build_config
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/parrots_wrapper.py", line 13, in <module>
+    return torch.cuda.is_available()
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/torch/cuda/__init__.py", line 80, in is_available
+    from .parrots_wrapper import get_build_config
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/parrots_wrapper.py", line 13, in <module>
+    from mmcv.utils.misc import has_method
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/__init__.py", line 41, in <module>
+    return torch.cuda.is_available()
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/torch/cuda/__init__.py", line 80, in is_available
+    return torch._C._cuda_getDeviceCount() > 0
+KeyboardInterrupt
+    IS_CUDA_AVAILABLE = is_cuda_available()
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/parrots_wrapper.py", line 10, in is_cuda_available
+    IS_CUDA_AVAILABLE = is_cuda_available()
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/parrots_wrapper.py", line 10, in is_cuda_available
+    from .env import collect_env
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/env.py", line 13, in <module>
+    return torch._C._cuda_getDeviceCount() > 0
+KeyboardInterrupt
+    return torch.cuda.is_available()
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/torch/cuda/__init__.py", line 80, in is_available
+    return torch.cuda.is_available()
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/torch/cuda/__init__.py", line 80, in is_available
+    from .parrots_wrapper import get_build_config
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/parrots_wrapper.py", line 13, in <module>
+    return torch._C._cuda_getDeviceCount() > 0
+KeyboardInterrupt
+    return torch._C._cuda_getDeviceCount() > 0
+KeyboardInterrupt
+    IS_CUDA_AVAILABLE = is_cuda_available()
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/parrots_wrapper.py", line 10, in is_cuda_available
+    return torch.cuda.is_available()
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/torch/cuda/__init__.py", line 80, in is_available
+    return torch._C._cuda_getDeviceCount() > 0
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "tools/train.py", line 9, in <module>
+    import mmcv
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/__init__.py", line 6, in <module>
+    from .fileio import *
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/fileio/__init__.py", line 2, in <module>
+    from .file_client import BaseStorageBackend, FileClient
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/fileio/file_client.py", line 15, in <module>
+    from mmcv.utils.misc import has_method
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/__init__.py", line 41, in <module>
+    from .env import collect_env
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/env.py", line 13, in <module>
+    from .parrots_wrapper import get_build_config
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/parrots_wrapper.py", line 13, in <module>
+    IS_CUDA_AVAILABLE = is_cuda_available()
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/mmcv/utils/parrots_wrapper.py", line 10, in is_cuda_available
+    return torch.cuda.is_available()
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/torch/cuda/__init__.py", line 80, in is_available
+    return torch._C._cuda_getDeviceCount() > 0
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/runpy.py", line 194, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/torch/distributed/launch.py", line 193, in <module>
+    main()
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/torch/distributed/launch.py", line 189, in main
+    launch(args)
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/torch/distributed/launch.py", line 174, in launch
+    run(args)
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/torch/distributed/run.py", line 710, in run
+    elastic_launch(
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/torch/distributed/launcher/api.py", line 131, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/torch/distributed/launcher/api.py", line 252, in launch_agent
+    result = agent.run()
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/torch/distributed/elastic/metrics/api.py", line 125, in wrapper
+    result = f(*args, **kwargs)
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/torch/distributed/elastic/agent/server/api.py", line 709, in run
+    result = self._invoke_run(role)
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/torch/distributed/elastic/agent/server/api.py", line 843, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/home/changkang.li/anaconda3/envs/open-mmlab/lib/python3.8/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 60, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 1645696 got signal: 2
