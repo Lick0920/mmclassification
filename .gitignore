@@ -132,3 +132,8 @@ venv.bak/
 *.pvti-journal
 /cache_engine
 /report
+
+*.tar.gz
+
+/dataset_lck
+*.tar

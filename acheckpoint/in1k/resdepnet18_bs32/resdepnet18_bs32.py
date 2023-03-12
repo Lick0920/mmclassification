@@ -1,7 +1,7 @@
 model = dict(
     type='ImageClassifier',
     backbone=dict(
-        type='ResNet',
+        type='Res_depNet',
         depth=18,
         num_stages=4,
         out_indices=(3, ),
@@ -92,17 +92,17 @@ data = dict(
             dict(type='ImageToTensor', keys=['img']),
             dict(type='Collect', keys=['img'])
         ]))
-evaluation = dict(interval=1, metric='accuracy')
+evaluation = dict(interval=5, metric='accuracy')
 optimizer = dict(type='SGD', lr=0.1, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(grad_clip=None)
 lr_config = dict(policy='step', step=[30, 60, 90])
 runner = dict(type='EpochBasedRunner', max_epochs=100)
-checkpoint_config = dict(interval=1)
+checkpoint_config = dict(interval=5)
 log_config = dict(interval=100, hooks=[dict(type='TextLoggerHook')])
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
 load_from = None
+resume_from = 'acheckpoint/in1k/resdepnet18_bs32/latest.pth'
 workflow = [('train', 1)]
-resume_from = 'acheckpoint/in1k/resnet18_bs32_baseline/latest.pth'
-work_dir = 'acheckpoint/in1k/resnet18_bs32_baseline'
+work_dir = 'acheckpoint/in1k/resdepnet18_bs32'
 gpu_ids = range(0, 8)

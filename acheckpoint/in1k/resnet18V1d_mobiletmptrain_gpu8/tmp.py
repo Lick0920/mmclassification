@@ -1,7 +1,7 @@
 model = dict(
     type='ImageClassifier',
     backbone=dict(
-        type='ResNet',
+        type='ResNetV1d',
         depth=18,
         num_stages=4,
         out_indices=(3, ),
@@ -18,7 +18,7 @@ img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 train_pipeline = [
     dict(type='LoadImageFromFile'),
-    dict(type='RandomResizedCrop', size=224),
+    dict(type='RandomResizedCrop', size=224, backend='pillow'),
     dict(type='RandomFlip', flip_prob=0.5, direction='horizontal'),
     dict(
         type='Normalize',
@@ -31,7 +31,7 @@ train_pipeline = [
 ]
 test_pipeline = [
     dict(type='LoadImageFromFile'),
-    dict(type='Resize', size=(256, -1)),
+    dict(type='Resize', size=(256, -1), backend='pillow'),
     dict(type='CenterCrop', crop_size=224),
     dict(
         type='Normalize',
@@ -49,7 +49,7 @@ data = dict(
         data_prefix='/home/changkang.li/dataset_lck/Imagenet12/train',
         pipeline=[
             dict(type='LoadImageFromFile'),
-            dict(type='RandomResizedCrop', size=224),
+            dict(type='RandomResizedCrop', size=224, backend='pillow'),
             dict(type='RandomFlip', flip_prob=0.5, direction='horizontal'),
             dict(
                 type='Normalize',
@@ -66,7 +66,7 @@ data = dict(
         ann_file='/home/changkang.li/dataset_lck/Imagenet12/val.txt',
         pipeline=[
             dict(type='LoadImageFromFile'),
-            dict(type='Resize', size=(256, -1)),
+            dict(type='Resize', size=(256, -1), backend='pillow'),
             dict(type='CenterCrop', crop_size=224),
             dict(
                 type='Normalize',
@@ -82,7 +82,7 @@ data = dict(
         ann_file='/home/changkang.li/dataset_lck/Imagenet12/val.txt',
         pipeline=[
             dict(type='LoadImageFromFile'),
-            dict(type='Resize', size=(256, -1)),
+            dict(type='Resize', size=(256, -1), backend='pillow'),
             dict(type='CenterCrop', crop_size=224),
             dict(
                 type='Normalize',
@@ -93,16 +93,16 @@ data = dict(
             dict(type='Collect', keys=['img'])
         ]))
 evaluation = dict(interval=1, metric='accuracy')
-optimizer = dict(type='SGD', lr=0.1, momentum=0.9, weight_decay=0.0001)
+optimizer = dict(type='SGD', lr=0.045, momentum=0.9, weight_decay=4e-05)
 optimizer_config = dict(grad_clip=None)
-lr_config = dict(policy='step', step=[30, 60, 90])
-runner = dict(type='EpochBasedRunner', max_epochs=100)
-checkpoint_config = dict(interval=1)
+lr_config = dict(policy='step', gamma=0.98, step=1)
+runner = dict(type='EpochBasedRunner', max_epochs=300)
+checkpoint_config = dict(interval=5)
 log_config = dict(interval=100, hooks=[dict(type='TextLoggerHook')])
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
 load_from = None
+resume_from = None
 workflow = [('train', 1)]
-resume_from = 'acheckpoint/in1k/resnet18_bs32_baseline/latest.pth'
-work_dir = 'acheckpoint/in1k/resnet18_bs32_baseline'
+work_dir = 'acheckpoint/in1k/resnet18V1d_mobiletmptrain_gpu8'
 gpu_ids = range(0, 8)

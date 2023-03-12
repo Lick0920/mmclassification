@@ -83,7 +83,7 @@ def parse_args():
         action='store_true',
         help='Wether to use test time augmentation, default not to use')
     parser.add_argument(
-        '--save-path',
+        '--save_path',
         type=Path,
         help='The path to save visualize cam image, default not to save.')
     parser.add_argument('--device', default='cpu', help='Device to use cpu')
@@ -257,6 +257,7 @@ def show_cam_grad(grayscale_cam, src_img, title, out_path=None):
         src_img, grayscale_cam, use_rgb=False)
 
     if out_path:
+        print(str(out_path))
         mmcv.imwrite(visualization_img, str(out_path))
     else:
         mmcv.imshow(visualization_img, win_name=title)
@@ -302,6 +303,15 @@ def get_default_traget_layers(model, args):
 
 def main():
     args = parse_args()
+    # args.img = '/home/changkang.li/mmclassification-master/demo/dog.jpg'
+    # args.config = '/home/changkang.li/mmclassification-master/acheckpoint/in1k/adepnetv1d18_in1k/adepnetv1d18_in1k.py'
+    # args.checkpoint = '/home/changkang.li/mmclassification-master/acheckpoint/in1k/adepnetv1d18_in1k/latest.pth'
+    # args.target_layers = 'backbone.layer4'
+    # args.method = 'LayerCAM'
+    # args.eigen_smooth = True
+    # args.aug_smooth = True
+    # args.save_path = 'vim_result'
+
     cfg = Config.fromfile(args.config)
     if args.cfg_options is not None:
         cfg.merge_from_dict(args.cfg_options)

@@ -21,6 +21,8 @@ from .repmlp import RepMLPNet
 from .repvgg import RepVGG
 from .res2net import Res2Net
 from .res_depnet import Res_depNet
+# , Res_depNetV1d_cp_s3
+# from .resnet_kse import ResNet_kse
 from .resnest import ResNeSt
 from .resnet import ResNet, ResNetV1c, ResNetV1d
 from .resnet_cifar import ResNet_CIFAR
@@ -40,6 +42,7 @@ from .vgg import VGG
 from .vision_transformer import VisionTransformer
 from .resdepnet_cifar import Res_depNet_CIFAR
 
+
 __all__ = [
     'LeNet5', 'AlexNet', 'VGG', 'RegNet', 'ResNet', 'ResNeXt', 'ResNetV1d',
     'ResNeSt', 'ResNet_CIFAR', 'SEResNet', 'SEResNeXt', 'ShuffleNetV1',
@@ -50,4 +53,5 @@ __all__ = [
     'ConvMixer', 'CSPDarkNet', 'CSPResNet', 'CSPResNeXt', 'CSPNet',
     'RepMLPNet', 'PoolFormer', 'DenseNet', 'VAN', 'MViT', 'EfficientFormer',
     'HorNet', 'Res_depNet', 'Res_depNet_CIFAR'
+    # 'ResNet_kse'
 ]

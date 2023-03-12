@@ -103,6 +103,6 @@ dist_params = dict(backend='nccl')
 log_level = 'INFO'
 load_from = None
 workflow = [('train', 1)]
-resume_from = None
+resume_from = 'acheckpoint/in1k/resnet18V1d_in1k_bs32real_baseline/latest.pth'
 work_dir = 'acheckpoint/in1k/resnet18V1d_in1k_bs32real_baseline'
 gpu_ids = range(0, 8)

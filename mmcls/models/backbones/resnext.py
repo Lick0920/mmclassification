@@ -1,6 +1,19 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from mmcv.cnn import build_conv_layer, build_norm_layer
 
+# ###
+# import sys
+# sys.path.append('/home/changkang.li/Projects/mmclassification/mmcls/models/backbones')
+# sys.path.append('/home/changkang.li/Projects/mmclassification/mmcls/models')
+# # from builder import BACKBONES
+# from resnet import Bottleneck as _Bottleneck
+# from resnet import ResLayer, ResNet
+# from mmcv.cnn import MODELS as MMCV_MODELS
+# from mmcv.utils import Registry
+# MODELS = Registry('models', parent=MMCV_MODELS)
+# BACKBONES = MODELS
+
+###
 from ..builder import BACKBONES
 from .resnet import Bottleneck as _Bottleneck
 from .resnet import ResLayer, ResNet
@@ -146,3 +159,15 @@ class ResNeXt(ResNet):
             width_per_group=self.width_per_group,
             base_channels=self.base_channels,
             **kwargs)
+
+
+# if __name__ == '__main__':
+#     model = ResNeXt(depth=50)
+#     import torch
+#     # load_checkpoint(model, 'resnext50_32x4d-7cdf4587.pth')
+#     # model.eval()
+#     print(model)
+#     x = torch.randn(1, 3, 224, 224)
+#     with torch.no_grad():
+#         y = model(x)
+#     print(y[0].shape)

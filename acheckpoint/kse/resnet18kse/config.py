@@ -1,7 +1,7 @@
 model = dict(
     type='ImageClassifier',
     backbone=dict(
-        type='ResNet',
+        type='ResNet_kse',
         depth=18,
         num_stages=4,
         out_indices=(3, ),
@@ -103,6 +103,6 @@ dist_params = dict(backend='nccl')
 log_level = 'INFO'
 load_from = None
 workflow = [('train', 1)]
-resume_from = 'acheckpoint/in1k/resnet18_bs32_baseline/latest.pth'
-work_dir = 'acheckpoint/in1k/resnet18_bs32_baseline'
-gpu_ids = range(0, 8)
+resume_from = None
+work_dir = '/home/changkang.li/mmclassification-master/acheckpoint/kse/resnet18kse'
+gpu_ids = range(0, 1)

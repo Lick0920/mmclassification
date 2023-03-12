@@ -1,6 +1,5 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-import math
-import torch
+
 import torch.nn as nn
 import torch.utils.checkpoint as cp
 from mmcv.cnn import (ConvModule, build_activation_layer, build_conv_layer,
@@ -9,25 +8,22 @@ from mmcv.cnn.bricks import DropPath
 from mmcv.runner import BaseModule
 from mmcv.utils.parrots_wrapper import _BatchNorm
 
-# import sys
-# sys.path.append('/home/changkang.li/mmclassification/mmcls/models/backbones')
-# sys.path.append('/home/changkang.li/mmclassification/mmcls/models')
-# from base_backbone import BaseBackbone
-# from mmcv.cnn import MODELS as MMCV_MODELS
-# from mmcv.utils import Registry
-# MODELS = Registry('models', parent=MMCV_MODELS)
-# BACKBONES = MODELS
+import sys
+sys.path.append('/home/changkang.li/mmclassification/mmcls/models/backbones')
+sys.path.append('/home/changkang.li/mmclassification/mmcls/models')
+from base_backbone import BaseBackbone
+from mmcv.cnn import MODELS as MMCV_MODELS
+from mmcv.utils import Registry
+MODELS = Registry('models', parent=MMCV_MODELS)
+BACKBONES = MODELS
 
 
-from ..builder import BACKBONES
-from .base_backbone import BaseBackbone
+# from ..builder import BACKBONES
+# from .base_backbone import BaseBackbone
 
 eps = 1.0e-5
-from .attentions.SEAttention import SEAttention
-from .attentions.SKAttention import SKAttention
-from .attentions.Ecaattention import ECAAttention
-from .attentions.shuffleattention import ShuffleAttention
-# 改basicblock ---> ResNetBasicBlock——dep
+
+# 改basicblock ---> ResNetBasicBlock
 class BasicBlock(BaseModule):
     """BasicBlock for ResNet.
 
@@ -153,290 +149,6 @@ class BasicBlock(BaseModule):
         out = self.relu(out)
 
         return out
-
-# 改basicblock ---> BasicBlock_slim
-class BasicBlock_slim(BaseModule):
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 expansion=1,
-                 stride=1,
-                 dilation=1,
-                 downsample=None,
-                 style='pytorch',
-                 with_cp=False,
-                 conv_cfg=None,
-                 norm_cfg=dict(type='BN'),
-                 drop_path_rate=0.0,
-                 act_cfg=dict(type='ReLU', inplace=True),
-                 init_cfg=None,
-                 scale_factor=3):
-        super(BasicBlock_slim, self).__init__(init_cfg=init_cfg)
-        self.in_channels = in_channels
-        self.out_channels = out_channels
-        self.expansion = expansion
-        assert self.expansion == 1
-        assert out_channels % expansion == 0
-        self.mid_channels = out_channels // expansion // scale_factor
-        self.stride = stride
-        self.dilation = dilation
-        self.style = style
-        self.with_cp = with_cp
-        self.conv_cfg = conv_cfg
-        self.norm_cfg = norm_cfg
-
-        self.norm1_name, norm1 = build_norm_layer(
-            norm_cfg, self.mid_channels, postfix=1)
-        self.norm2_name, norm2 = build_norm_layer(
-            norm_cfg, out_channels, postfix=2)
-
-        # self.conv1 = build_conv_layer(
-        #     conv_cfg,
-        #     in_channels,
-        #     self.mid_channels,
-        #     3,
-        #     stride=stride,
-        #     padding=dilation,
-        #     dilation=dilation,
-        #     bias=False)
-        self.conv1 = DepthwiseSeparableConvModule(
-            in_channels,
-            self.mid_channels,
-            3,
-            stride=stride,
-            padding=dilation,
-            dilation=dilation,
-            bias=False)
-        self.add_module(self.norm1_name, norm1)
-        self.conv2 = DepthwiseSeparableConvModule(
-            # conv_cfg,
-            self.mid_channels,
-            out_channels,
-            3,
-            padding=1,
-            bias=False)
-        self.add_module(self.norm2_name, norm2)
-
-        self.relu = build_activation_layer(act_cfg)
-        self.downsample = downsample
-        self.drop_path = DropPath(drop_prob=drop_path_rate
-                                  ) if drop_path_rate > eps else nn.Identity()
-
-    @property
-    def norm1(self):
-        return getattr(self, self.norm1_name)
-
-    @property
-    def norm2(self):
-        return getattr(self, self.norm2_name)
-
-    def forward(self, x):
-
-        def _inner_forward(x):
-            identity = x
-
-            out = self.conv1(x)
-            out = self.norm1(out)
-            out = self.relu(out)
-
-            out = self.conv2(out)
-            out = self.norm2(out)
-
-            if self.downsample is not None:
-                identity = self.downsample(x)
-
-            out = self.drop_path(out)
-
-            out += identity
-
-            return out
-
-        if self.with_cp and x.requires_grad:
-            out = cp.checkpoint(_inner_forward, x)
-        else:
-            out = _inner_forward(x)
-
-        out = self.relu(out)
-
-        return out
-
-
-class GhostModule(nn.Conv2d):
-    def __init__(self, in_channels, out_channels, kernel_size, dw_size=3, ratio=2, stride=1,
-                 padding=0, dilation=1, groups=1, bias=True,conv1dep=False,attention=None):
-        super(GhostModule, self).__init__(
-            in_channels, out_channels, kernel_size, stride, padding, dilation, groups, bias)
-        self.weight = None
-        self.ratio = ratio
-        self.dw_size = dw_size
-        self.dw_dilation = (dw_size - 1) // 2
-        self.init_channels = math.ceil(out_channels / ratio)
-        self.new_channels = self.init_channels * (ratio - 1)
-        self.conv1dep = conv1dep
-        self.attention = attention
-        
-        
-        if self.conv1dep == True:
-            self.conv1 = DepthwiseSeparableConvModule(self.in_channels, self.init_channels, kernel_size = kernel_size, stride=self.stride, padding=self.padding, norm_cfg=None, act_cfg=None)
-        else:
-            self.conv1 = nn.Conv2d(self.in_channels, self.init_channels, kernel_size, self.stride, padding=self.padding)
-        self.conv2 = nn.Conv2d(self.init_channels, self.new_channels, self.dw_size, 1, padding=int(self.dw_size/2), groups=self.init_channels)
-        
-        
-        self.weight1 = nn.Parameter(torch.Tensor(self.init_channels, self.in_channels, kernel_size, kernel_size))
-        self.bn1 = nn.BatchNorm2d(self.init_channels)
-        if self.new_channels > 0:
-            self.weight2 = nn.Parameter(torch.Tensor(self.new_channels, 1, self.dw_size, self.dw_size))
-            self.bn2 = nn.BatchNorm2d(self.out_channels - self.init_channels)
-        
-        if bias:
-            self.bias =nn.Parameter(torch.Tensor(out_channels))
-        else:
-            self.register_parameter('bias', None)
-        self.reset_custome_parameters()
-    
-    def reset_custome_parameters(self):
-        nn.init.kaiming_uniform_(self.weight1, a=math.sqrt(5))
-        if self.new_channels > 0:
-            nn.init.kaiming_uniform_(self.weight2, a=math.sqrt(5))
-        if self.bias is not None:
-            nn.init.constant_(self.bias, 0)
-    
-    def forward(self, input): 
-        x1 = self.conv1(input)
-        if self.new_channels == 0:
-            return x1
-        x2 = self.conv2(x1)
-        x2 = x2[:, :self.out_channels - self.init_channels, :, :]
-        x = torch.cat([x1, x2], 1)
-        return x
-
-
-
-# 改basicblock ---> BasicBlock_ghost
-class BasicBlock_ghost(BaseModule):
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 expansion=1,
-                 stride=1,
-                 dilation=1,
-                 downsample=None,
-                 style='pytorch',
-                 with_cp=False,
-                 conv_cfg=None,
-                 norm_cfg=dict(type='BN'),
-                 drop_path_rate=0.0,
-                 act_cfg=dict(type='ReLU', inplace=True),
-                 init_cfg=None,
-                 scale_factor=1,
-                 ratio=2,
-                 conv1dep=False,
-                 attention=None):
-        super(BasicBlock_ghost, self).__init__(init_cfg=init_cfg)
-        self.in_channels = in_channels
-        self.out_channels = out_channels
-        self.expansion = expansion
-        assert self.expansion == 1
-        assert out_channels % expansion == 0
-        self.mid_channels = out_channels // expansion // scale_factor
-        self.stride = stride
-        self.dilation = dilation
-        self.style = style
-        self.with_cp = with_cp
-        self.conv_cfg = conv_cfg
-        self.norm_cfg = norm_cfg
-        self.ratio = ratio
-        self.conv1dep = conv1dep
-        self.attention = attention
-
-        self.norm1_name, norm1 = build_norm_layer(
-            norm_cfg, self.mid_channels, postfix=1)
-        self.norm2_name, norm2 = build_norm_layer(
-            norm_cfg, out_channels, postfix=2)
-
-        self.conv1 = GhostModule(
-            in_channels,
-            self.mid_channels,
-            kernel_size=3,
-            stride=stride,
-            padding=dilation,
-            dilation=dilation,
-            bias=False,
-            ratio=self.ratio,
-            conv1dep=self.conv1dep,
-            attention=self.attention)
-        self.add_module(self.norm1_name, norm1)
-        # attention
-        if self.attention is not None:
-            if self.attention == "SEattention":
-                self.se = SEAttention(self.mid_channels, reduction=8)
-            elif self.attention == "SKattention":
-                self.se = SKAttention(self.mid_channels, reduction=8)
-            elif self.attention == "ECAattention":
-                self.se = ECAAttention(self.mid_channels, reduction=8)
-            elif self.attention == "Shuffleattention":
-                self.se = ShuffleAttention(self.mid_channels, reduction=8)
-
-        
-        self.conv2 = GhostModule(
-            # conv_cfg,
-            self.mid_channels,
-            out_channels,
-            kernel_size=3,
-            padding=1,
-            bias=False,
-            ratio=self.ratio,
-            conv1dep=self.conv1dep,
-            attention=self.attention)
-        self.add_module(self.norm2_name, norm2)
-
-        self.relu = build_activation_layer(act_cfg)
-        self.downsample = downsample
-        self.drop_path = DropPath(drop_prob=drop_path_rate
-                                  ) if drop_path_rate > eps else nn.Identity()
-
-    @property
-    def norm1(self):
-        return getattr(self, self.norm1_name)
-
-    @property
-    def norm2(self):
-        return getattr(self, self.norm2_name)
-
-    def forward(self, x):
-
-        def _inner_forward(x):
-            identity = x
-
-            out = self.conv1(x)
-            out = self.norm1(out)
-            out = self.relu(out)
-            if self.attention is not None:
-                if self.attention == 'SEattention':
-                    out = self.se(out)
-
-            out = self.conv2(out)
-            out = self.norm2(out)
-
-            if self.downsample is not None:
-                identity = self.downsample(x)
-
-            out = self.drop_path(out)
-
-            out += identity
-
-            return out
-
-        if self.with_cp and x.requires_grad:
-            out = cp.checkpoint(_inner_forward, x)
-        else:
-            out = _inner_forward(x)
-
-        out = self.relu(out)
-
-        return out
-
 
 
 class Bottleneck(BaseModule):
@@ -777,8 +489,6 @@ class Res_depNet(BaseBackbone):
                  out_indices=(3, ),
                  style='pytorch',
                  deep_stem=False,
-                 deep_stem_cp=False,
-                 slim=False,
                  avg_down=False,
                  frozen_stages=-1,
                  conv_cfg=None,
@@ -793,12 +503,7 @@ class Res_depNet(BaseBackbone):
                          val=1,
                          layer=['_BatchNorm', 'GroupNorm'])
                  ],
-                 drop_path_rate=0.0,
-                 scale_factor=1,
-                 ghost=False,
-                 ratio=2,
-                 conv1dep=False,
-                 attention=None):
+                 drop_path_rate=0.0):
         super(Res_depNet, self).__init__(init_cfg)
         if depth not in self.arch_settings:
             raise KeyError(f'invalid depth {depth} for Res_depNet')
@@ -814,7 +519,6 @@ class Res_depNet(BaseBackbone):
         assert max(out_indices) < num_stages
         self.style = style
         self.deep_stem = deep_stem
-        self.deep_stem_cp = deep_stem_cp
         self.avg_down = avg_down
         self.frozen_stages = frozen_stages
         self.conv_cfg = conv_cfg
@@ -825,111 +529,38 @@ class Res_depNet(BaseBackbone):
         self.block, stage_blocks = self.arch_settings[depth]
         self.stage_blocks = stage_blocks[:num_stages]
         self.expansion = get_expansion(self.block, expansion)
-        self.slim = slim
-        self.scale_factor = scale_factor
-        self.ghost = ghost
-        self.ratio = ratio
-        self.conv1dep = conv1dep
-        self.attention = attention
 
         self._make_stem_layer(in_channels, stem_channels)
-        if self.ghost==True:
-            self.res_layers = []
-            _in_channels = stem_channels
-            _out_channels = base_channels * self.expansion
-            for i, num_blocks in enumerate(self.stage_blocks):
-                stride = strides[i]
-                dilation = dilations[i]
-                res_layer = self.make_res_layer(
-                    block=BasicBlock_ghost,
-                    num_blocks=num_blocks,
-                    in_channels=_in_channels,
-                    out_channels=_out_channels,
-                    expansion=self.expansion,
-                    stride=stride,
-                    dilation=dilation,
-                    style=self.style,
-                    avg_down=self.avg_down,
-                    with_cp=with_cp,
-                    conv_cfg=conv_cfg,
-                    norm_cfg=norm_cfg,
-                    drop_path_rate=drop_path_rate,
-                    scale_factor=self.scale_factor,
-                    ratio=self.ratio,
-                    conv1dep=self.conv1dep,
-                    attention=self.attention)
-                _in_channels = _out_channels
-                _out_channels *= 2
-                layer_name = f'layer{i + 1}'
-                self.add_module(layer_name, res_layer)
-                self.res_layers.append(layer_name)
 
-            self._freeze_stages()
+        self.res_layers = []
+        _in_channels = stem_channels
+        _out_channels = base_channels * self.expansion
+        for i, num_blocks in enumerate(self.stage_blocks):
+            stride = strides[i]
+            dilation = dilations[i]
+            res_layer = self.make_res_layer(
+                block=self.block,
+                num_blocks=num_blocks,
+                in_channels=_in_channels,
+                out_channels=_out_channels,
+                expansion=self.expansion,
+                stride=stride,
+                dilation=dilation,
+                style=self.style,
+                avg_down=self.avg_down,
+                with_cp=with_cp,
+                conv_cfg=conv_cfg,
+                norm_cfg=norm_cfg,
+                drop_path_rate=drop_path_rate)
+            _in_channels = _out_channels
+            _out_channels *= 2
+            layer_name = f'layer{i + 1}'
+            self.add_module(layer_name, res_layer)
+            self.res_layers.append(layer_name)
 
-            self.feat_dim = res_layer[-1].out_channels
+        self._freeze_stages()
 
-        elif not self.slim:
-            self.res_layers = []
-            _in_channels = stem_channels
-            _out_channels = base_channels * self.expansion
-            for i, num_blocks in enumerate(self.stage_blocks):
-                stride = strides[i]
-                dilation = dilations[i]
-                res_layer = self.make_res_layer(
-                    block=self.block,
-                    num_blocks=num_blocks,
-                    in_channels=_in_channels,
-                    out_channels=_out_channels,
-                    expansion=self.expansion,
-                    stride=stride,
-                    dilation=dilation,
-                    style=self.style,
-                    avg_down=self.avg_down,
-                    with_cp=with_cp,
-                    conv_cfg=conv_cfg,
-                    norm_cfg=norm_cfg,
-                    drop_path_rate=drop_path_rate)
-                _in_channels = _out_channels
-                _out_channels *= 2
-                layer_name = f'layer{i + 1}'
-                self.add_module(layer_name, res_layer)
-                self.res_layers.append(layer_name)
-
-            self._freeze_stages()
-
-            self.feat_dim = res_layer[-1].out_channels
-        # self.slim = True
-        else:
-            self.res_layers = []
-            _in_channels = stem_channels
-            _out_channels = base_channels * self.expansion
-            for i, num_blocks in enumerate(self.stage_blocks):
-                stride = strides[i]
-                dilation = dilations[i]
-                res_layer = self.make_res_layer(
-                    block=BasicBlock_slim,
-                    num_blocks=num_blocks,
-                    in_channels=_in_channels,
-                    out_channels=_out_channels,
-                    expansion=self.expansion,
-                    stride=stride,
-                    dilation=dilation,
-                    style=self.style,
-                    avg_down=self.avg_down,
-                    with_cp=with_cp,
-                    conv_cfg=conv_cfg,
-                    norm_cfg=norm_cfg,
-                    drop_path_rate=drop_path_rate,
-                    scale_factor=self.scale_factor)
-                _in_channels = _out_channels
-                _out_channels *= 2
-                layer_name = f'layer{i + 1}'
-                self.add_module(layer_name, res_layer)
-                self.res_layers.append(layer_name)
-
-            self._freeze_stages()
-
-            self.feat_dim = res_layer[-1].out_channels
+        self.feat_dim = res_layer[-1].out_channels
 
     def make_res_layer(self, **kwargs):
         return ResLayer(**kwargs)
@@ -939,36 +570,7 @@ class Res_depNet(BaseBackbone):
         return getattr(self, self.norm1_name)
 
     def _make_stem_layer(self, in_channels, stem_channels):
-        if self.deep_stem_cp:
-            self.stem_cp = nn.Sequential(
-                ConvModule(
-                    in_channels,
-                    stem_channels // 2,
-                    kernel_size=3,
-                    stride=2,
-                    padding=1,
-                    conv_cfg=self.conv_cfg,
-                    norm_cfg=self.norm_cfg,
-                    inplace=True),
-                DepthwiseSeparableConvModule(
-                    stem_channels // 2,
-                    stem_channels // 2,
-                    kernel_size=3,
-                    stride=1,
-                    padding=1,
-                    conv_cfg=self.conv_cfg,
-                    norm_cfg=self.norm_cfg,
-                    inplace=True),
-                DepthwiseSeparableConvModule(
-                    stem_channels // 2,
-                    stem_channels,
-                    kernel_size=3,
-                    stride=1,
-                    padding=1,
-                    conv_cfg=self.conv_cfg,
-                    norm_cfg=self.norm_cfg,
-                    inplace=True))
-        elif self.deep_stem:
+        if self.deep_stem:
             self.stem = nn.Sequential(
                 ConvModule(
                     in_channels,
@@ -1014,11 +616,7 @@ class Res_depNet(BaseBackbone):
 
     def _freeze_stages(self):
         if self.frozen_stages >= 0:
-            if self.deep_stem_cp:
-                self.stem.eval()
-                for param in self.stem.parameters():
-                    param.requires_grad = False
-            elif self.deep_stem:
+            if self.deep_stem:
                 self.stem.eval()
                 for param in self.stem.parameters():
                     param.requires_grad = False
@@ -1050,9 +648,7 @@ class Res_depNet(BaseBackbone):
                     constant_init(m.norm2, 0)
 
     def forward(self, x):
-        if self.deep_stem_cp:
-            x = self.stem_cp(x)
-        elif self.deep_stem:
+        if self.deep_stem:
             x = self.stem(x)
         else:
             x = self.conv1(x)
@@ -1110,44 +706,9 @@ class Res_depNetV1d(Res_depNet):
             deep_stem=True, avg_down=True, **kwargs)
 
 
-
-@BACKBONES.register_module()
-class Res_depNetV1d_cp(Res_depNet):
-    """ResNetV1d backbone.
-
-    This variant is described in `Bag of Tricks.
-    <https://arxiv.org/pdf/1812.01187.pdf>`_.
-
-    Compared with default ResNet(ResNetV1b), ResNetV1d replaces the 7x7 conv in
-    the input stem with three 3x3 convs. And in the downsampling block, a 2x2
-    avg_pool with stride 2 is added before conv, whose stride is changed to 1.
-    """
-
-    def __init__(self, **kwargs):
-        super(Res_depNetV1d_cp, self).__init__(
-            deep_stem_cp=True, avg_down=True, **kwargs)
-
-
-
-@BACKBONES.register_module()
-class Res_depNetV1d_cp_s3(Res_depNet):
-    # 压缩三倍
-    def __init__(self, **kwargs):
-        super(Res_depNetV1d_cp_s3, self).__init__(
-            slim=True, deep_stem_cp=True, avg_down=True, **kwargs)
-
-@BACKBONES.register_module()
-class Res_depNetV1d_cp_ghost(Res_depNet):
-    # ghost块
-    def __init__(self, **kwargs):
-        super(Res_depNetV1d_cp_ghost, self).__init__(
-            ghost=True, deep_stem_cp=True, avg_down=True, **kwargs)
-
-
-
 if __name__ == '__main__':
     import torch
-    model = Res_depNetV1d_cp_s3(depth=18, scale_factor=5)
+    model = Res_depNet(depth=18)
     model.init_weights()
     # 显示网络结构
     print(model)

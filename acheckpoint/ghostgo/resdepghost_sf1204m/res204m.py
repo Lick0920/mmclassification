@@ -1,7 +1,9 @@
 model = dict(
     type='ImageClassifier',
     backbone=dict(
-        type='ResNet',
+        type='Res_depNetV1d_cp_ghost',
+        scale_factor=1,
+        conv1dep=True,
         depth=18,
         num_stages=4,
         out_indices=(3, ),
@@ -93,16 +95,17 @@ data = dict(
             dict(type='Collect', keys=['img'])
         ]))
 evaluation = dict(interval=1, metric='accuracy')
-optimizer = dict(type='SGD', lr=0.1, momentum=0.9, weight_decay=0.0001)
+optimizer = dict(type='SGD', lr=0.045, momentum=0.9, weight_decay=4e-05)
 optimizer_config = dict(grad_clip=None)
-lr_config = dict(policy='step', step=[30, 60, 90])
-runner = dict(type='EpochBasedRunner', max_epochs=100)
-checkpoint_config = dict(interval=1)
+lr_config = dict(policy='step', gamma=0.98, step=1)
+runner = dict(type='EpochBasedRunner', max_epochs=300)
+checkpoint_config = dict(interval=5)
 log_config = dict(interval=100, hooks=[dict(type='TextLoggerHook')])
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
 load_from = None
+resume_from = '/home/changkang.li/mmclassification-master/acheckpoint/ghostgo/resdepghost_sf1204m/latest.pth'
 workflow = [('train', 1)]
-resume_from = 'acheckpoint/in1k/resnet18_bs32_baseline/latest.pth'
-work_dir = 'acheckpoint/in1k/resnet18_bs32_baseline'
+work_dir = 'acheckpoint/ghostgo/resdepghost_sf1204m/'
 gpu_ids = range(0, 8)
+find_unused_parameters = True

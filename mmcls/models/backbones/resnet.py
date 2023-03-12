@@ -10,7 +10,15 @@ from mmcv.utils.parrots_wrapper import _BatchNorm
 
 from ..builder import BACKBONES
 from .base_backbone import BaseBackbone
-
+# ####
+# import sys
+# sys.path.append('/home/changkang.li/Projects/mmclassification/mmcls/models/backbones')
+# from base_backbone import BaseBackbone
+# from mmcv.cnn import MODELS as MMCV_MODELS
+# from mmcv.utils import Registry
+# MODELS = Registry('models', parent=MMCV_MODELS)
+# BACKBONES = MODELS
+####
 eps = 1.0e-5
 
 
