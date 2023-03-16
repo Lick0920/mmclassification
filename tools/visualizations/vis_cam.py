@@ -42,9 +42,9 @@ METHOD_MAP = {
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Visualize CAM')
-    parser.add_argument('img', help='Image file')
-    parser.add_argument('config', help='Config file')
-    parser.add_argument('checkpoint', help='Checkpoint file')
+    parser.add_argument('--img', help='Image file')
+    parser.add_argument('--config', help='Config file')
+    parser.add_argument('--checkpoint', help='Checkpoint file')
     parser.add_argument(
         '--target-layers',
         default=[],
@@ -83,7 +83,7 @@ def parse_args():
         action='store_true',
         help='Wether to use test time augmentation, default not to use')
     parser.add_argument(
-        '--save_path',
+        '--save-path',
         type=Path,
         help='The path to save visualize cam image, default not to save.')
     parser.add_argument('--device', default='cpu', help='Device to use cpu')
@@ -303,14 +303,17 @@ def get_default_traget_layers(model, args):
 
 def main():
     args = parse_args()
-    # args.img = '/home/changkang.li/mmclassification-master/demo/dog.jpg'
+    args.img = '/home/changkang.li/mmclassification-master/demo/dog.jpg'
     # args.config = '/home/changkang.li/mmclassification-master/acheckpoint/in1k/adepnetv1d18_in1k/adepnetv1d18_in1k.py'
+    args.config = "/home/changkang.li/mmclassification-master/acheckpoint/ghostgo/seggost_dep_/sereduct8_dep_205m.py"
+    args.checkpoint = "/home/changkang.li/mmclassification-master/acheckpoint/ghostgo/seggost_dep_/latest.pth"
     # args.checkpoint = '/home/changkang.li/mmclassification-master/acheckpoint/in1k/adepnetv1d18_in1k/latest.pth'
-    # args.target_layers = 'backbone.layer4'
-    # args.method = 'LayerCAM'
+    args.target_layers = ['backbone.layer3.1.se']
+    args.method = 'LayerCAM'
     # args.eigen_smooth = True
-    # args.aug_smooth = True
-    # args.save_path = 'vim_result'
+    args.aug_smooth = True
+    args.save_path = './vim_result/' + args.target_layers[0] + '.jpg'
+    ##  args.preview_model =True
 
     cfg = Config.fromfile(args.config)
     if args.cfg_options is not None:
